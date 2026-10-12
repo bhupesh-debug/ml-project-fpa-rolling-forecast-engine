@@ -1,0 +1,13 @@
+Requirement_ID,Category,Requirement_Description,Implementation_File,Validation_Artifact,Status
+REQ-FPA-001,Architecture,Synthetic revenue panel generation for 8 business units over 72 months,src/data_pipeline.py,data/synthetic/monthly_revenue.csv,VERIFIED
+REQ-FPA-002,Feature Engineering,Lagged revenue and commercial driver feature construction with zero target leakage,src/feature_engineering.py,tests/test_pipeline.py,VERIFIED
+REQ-FPA-003,Benchmarking,Fair 9-origin rolling backtest comparing seasonal naive trend naive and driver GBM,run.py,reports/results.json,VERIFIED
+REQ-FPA-004,Econometrics,OLS multiple linear regression with driver elasticities robust HC3 errors and VIF,src/regression_analysis.py,reports/regression_coefficients.csv,VERIFIED
+REQ-FPA-005,Regularization,Cross-comparison of Ridge and Lasso regularized models on rolling origins,src/regression_analysis.py,reports/results.json,VERIFIED
+REQ-FPA-006,Simulation,Deterministic stress scenarios for headcount marketing and systemic demand shocks,src/simulation.py,reports/simulation_report.md,VERIFIED
+REQ-FPA-007,Simulation,Optimal forecast horizon blending curve (Hybrid ML + Seasonal Naive),src/simulation.py,reports/simulation_report.md,VERIFIED
+REQ-FPA-008,Uncertainty,5000-run Monte Carlo simulation quantifying portfolio forecast distribution,src/simulation.py,reports/simulation_distribution.png,VERIFIED
+REQ-FPA-009,Finance ROI,Corporate FP&A business case with 3-year NPV payback and working capital savings,src/business_case.py,reports/business_case_table.csv,VERIFIED
+REQ-FPA-010,Governance,Complete MRM SR 11-7 model card and internal controls framework,docs/model_card.md,docs/governance_controls.md,VERIFIED
+REQ-FPA-011,Testing,Automated pytest regression test suite for pipelines and metrics,tests/test_pipeline.py,reports/test_log.txt,VERIFIED
+REQ-FPA-012,Executive Deck,10-slide PowerPoint executive presentation generated via python-pptx,slides/generate_deck.py,slides/project_deck.pptx,VERIFIED

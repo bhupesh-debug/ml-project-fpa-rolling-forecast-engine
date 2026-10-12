@@ -1,0 +1,4 @@
+Scenario,WAPE_Improvement_Pts,Working_Capital_Optimization,Expediting_Cost_Savings,Analyst_Labor_Savings,Total_Annual_Benefit,Implementation_Cost,Annual_Maintenance_Cost,Year1_Net_Benefit,Payback_Period_Months,Three_Year_NPV,ROI_3Year_Pct
+Conservative,2.2,"$1,100,000","$450,000","$85,000","$1,635,000","$260,000","$65,000","$1,310,000",2.0,"$3,644,358",1402.0%
+Base,3.8,"$2,100,000","$850,000","$120,000","$3,070,000","$240,000","$60,000","$2,770,000",1.0,"$7,245,424",3019.0%
+Upside,4.5,"$3,200,000","$1,400,000","$150,000","$4,750,000","$220,000","$55,000","$4,475,000",0.6,"$11,455,770",5207.0%
