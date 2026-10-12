@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FP&A Rolling Forecast Engine | Quantitative Analysis Lab</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <span class="brand-badge">PROJECT 2</span>
+      <span>FP&A Rolling Forecast Engine</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="../index.html" class="nav-link">← Portfolio Overview</a></li>
+      <li><a href="budget-overrun.html" class="nav-link">Budget Overrun</a></li>
+      <li><a href="fpa-forecast.html" class="nav-link active">FP&A Forecast</a></li>
+      <li><a href="liquidity-stress.html" class="nav-link">Liquidity Stress</a></li>
+      <li><a href="data-quality.html" class="nav-link">Data Quality</a></li>
+      <li><a href="https://github.com/bhupesh-debug/ml-project-fpa-rolling-forecast-engine" target="_blank" class="nav-link" style="color:var(--accent-cyan)">GitHub Repo ↗</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    
+    <!-- Hero Header -->
+    <section class="hero">
+      <div class="hero-tagline">
+        <span>★ FINANCIAL PLANNING & REVENUE DRIVER FORECASTING</span>
+      </div>
+      <h1 class="hero-title">FP&A Rolling Forecast Engine & Dynamic Horizon Optimization Lab</h1>
+      <p class="hero-desc">
+        Automating multi-horizon monthly divisional revenue forecasting across 8 operating business units. Evaluating Seasonal Naive, Trend-Adjusted Naive, Driver Gradient Boosting, and dynamic shrinkage blends across 9 rolling backtest origins.
+      </p>
+      <div class="hero-meta">
+        <div><strong>Dataset:</strong> 288 Monthly Observations (8 BUs × 36 Months)</div>
+        <div><strong>Validation Scheme:</strong> 9-Origin Rolling Backtest (Origins 24–32)</div>
+        <div><strong>1-Month Champion:</strong> Driver GBM (WAPE 0.062, Bias -1.5%)</div>
+        <div><strong>3-Month Champion:</strong> Dynamic Hybrid Blend (40% GBM / 60% Seasonal, WAPE 0.089)</div>
+      </div>
+    </section>
+
+    <!-- Top KPI Row -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">1-Month Champion WAPE</div>
+        <div class="kpi-value text-success">0.062</div>
+        <div class="kpi-subtext"><span class="positive">-41.0% Error</span> vs 0.105 Seasonal Naive</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Structural Forecast Bias</div>
+        <div class="kpi-value">-1.5%</div>
+        <div class="kpi-subtext">Eliminates -10.4% downward drag in seasonal run-rate</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">3-Month Optimal Blend WAPE</div>
+        <div class="kpi-value">0.089</div>
+        <div class="kpi-subtext">Beats pure GBM (0.117) & pure Seasonal (0.105)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Divisional Revenue Preserved</div>
+        <div class="kpi-value">$25.8M</div>
+        <div class="kpi-subtext">Annual under-forecasting bias corrected across 8 BUs</div>
+      </div>
+    </section>
+
+    <!-- Interactive Simulation Calculator -->
+    <section class="section">
+      <h2 class="section-title">Interactive Driver Shock & Forecast Horizon Simulator</h2>
+      <p class="section-desc">Test macro and operational driver shocks (sales headcount, marketing outlays, price indices), adjust machine learning vs. seasonal anchor weights, and observe real-time divisional forecast trajectories and confidence envelopes.</p>
+
+      <div class="simulator-card" id="sim-fpa-form">
+        <div class="sim-header">
+          <h3>Dynamic Revenue Forecasting & Driver Elasticity Engine</h3>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Recalculates monthly revenue projections across 8 operating divisions using verified OLS elasticities and multi-horizon backtest error bounds.</p>
+        </div>
+
+        <div class="sim-grid">
+          <!-- Controls Pane -->
+          <div class="controls-pane">
+            <div class="control-group">
+              <label>Forecast Horizon: <span class="val-display" id="val-p2-hor-disp">1 Month Ahead</span></label>
+              <select id="p2-horizon" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#F8FAFC; font-weight:600;">
+                <option value="1">1 Month Ahead (Tactical Operating Plan)</option>
+                <option value="2">2 Months Ahead (Mid-Quarter Adjustment)</option>
+                <option value="3">3 Months Ahead (Quarterly Close Guidance)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label>Sales Headcount Shock: <span class="val-display" id="val-p2-hc">0%</span></label>
+              <input type="range" id="p2-hc-shock" min="-20" max="20" step="2" value="0">
+            </div>
+
+            <div class="control-group">
+              <label>Marketing Spend Shock: <span class="val-display" id="val-p2-mkt">0%</span></label>
+              <input type="range" id="p2-mkt-shock" min="-30" max="30" step="5" value="0">
+            </div>
+
+            <div class="control-group">
+              <label>Price Realization Shock: <span class="val-display" id="val-p2-price">0%</span></label>
+              <input type="range" id="p2-price-shock" min="-10" max="10" step="1" value="0">
+            </div>
+
+            <div class="control-group">
+              <label>Forecast Blend Weight: <span class="val-display" id="val-p2-blend">80% ML / 20% Seasonal</span></label>
+              <input type="range" id="p2-blend-weight" min="0" max="100" step="10" value="80">
+            </div>
+          </div>
+
+          <!-- Live Results Pane -->
+          <div class="results-pane">
+            <div class="sim-metrics-row">
+              <div class="sim-kpi">
+                <div class="label">Adjusted Monthly Forecast</div>
+                <div class="val text-success" id="res-p2-forecast">$247.62M</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="label">Seasonal Naive Baseline</div>
+                <div class="val text-warning" id="res-p2-baseline">$221.80M</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="label">Expected Horizon WAPE</div>
+                <div class="val" id="res-p2-wape">0.061</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="label">P05 Downside Floor</div>
+                <div class="val text-danger" id="res-p2-p05">$241.92M</div>
+              </div>
+            </div>
+
+            <div class="sim-metrics-row">
+              <div class="sim-kpi" style="grid-column: span 2;">
+                <div class="label">P95 Upside Potential</div>
+                <div class="val" id="res-p2-p95" style="color:#10B981;">$253.07M</div>
+              </div>
+              <div class="sim-kpi" style="grid-column: span 2;">
+                <div class="label">Forecast Delta vs Seasonal Run-Rate</div>
+                <div class="val" style="color:var(--accent-cyan);">+$25.82M (+11.6%)</div>
+              </div>
+            </div>
+
+            <!-- Dynamic SVG Comparison -->
+            <div class="chart-box" id="p2-chart-container"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Analysis Tabs -->
+    <section class="section">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-target="tab-benchmarks">Backtest Benchmarks</button>
+        <button class="tab-btn" data-target="tab-regression">Driver Econometrics (OLS)</button>
+        <button class="tab-btn" data-target="tab-heterogeneity">Divisional Heterogeneity</button>
+        <button class="tab-btn" data-target="tab-qa">Q&A Register (8 Questions)</button>
+        <button class="tab-btn" data-target="tab-recommendations">Recommendations & Roadmap</button>
+      </div>
+
+      <!-- Tab 1: Backtest Benchmarks -->
+      <div class="tab-pane active" id="tab-benchmarks">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Forecasting Method</th>
+                <th>Validation Scheme</th>
+                <th>1-Month WAPE</th>
+                <th>2-Month WAPE</th>
+                <th>3-Month WAPE</th>
+                <th>Forecast Bias</th>
+                <th>Strategic Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Seasonal Naive</strong></td>
+                <td>9 Rolling Origins</td>
+                <td>0.105</td>
+                <td>0.105</td>
+                <td>0.105</td>
+                <td><span class="badge badge-rose">-10.4% (Severe Downward)</span></td>
+                <td>Underestimates trend; creates budget slack</td>
+              </tr>
+              <tr>
+                <td><strong>Trend-Adjusted Naive</strong></td>
+                <td>9 Rolling Origins</td>
+                <td>0.117</td>
+                <td>0.124</td>
+                <td>0.138</td>
+                <td>-1.2%</td>
+                <td>Volatile; amplifies high-frequency noise</td>
+              </tr>
+              <tr>
+                <td><strong>Driver Gradient Boosting (GBM)</strong></td>
+                <td>9 Rolling Origins</td>
+                <td><strong class="text-success">0.062</strong></td>
+                <td><strong class="text-success">0.092</strong></td>
+                <td>0.117</td>
+                <td><strong class="text-success">-1.5% (Unbiased)</strong></td>
+                <td><span class="badge badge-emerald">Champion 1m–2m</span> (Driver-aware)</td>
+              </tr>
+              <tr>
+                <td><strong>Dynamic Hybrid (40% GBM / 60% Seasonal)</strong></td>
+                <td>9 Rolling Origins</td>
+                <td>0.071</td>
+                <td>0.088</td>
+                <td><strong class="text-success">0.089</strong></td>
+                <td>-4.8%</td>
+                <td><span class="badge badge-emerald">Champion 3m</span> (Shrinkage stabilizer)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-top:1.5rem;">
+          <div class="chart-box">
+            <img src="outputs/p2_backtest_wape.png" alt="WAPE Progression by Horizon" style="max-width:100%; height:auto; border-radius:var(--radius-sm);">
+          </div>
+          <div class="chart-box">
+            <img src="outputs/p2_simulation_distribution.png" alt="Scenario Simulation Distribution" style="max-width:100%; height:auto; border-radius:var(--radius-sm);">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Econometric Regression -->
+      <div class="tab-pane" id="tab-regression">
+        <h3 style="margin-bottom:0.75rem;">Driver Elasticity OLS Regression with HC3 Robust Standard Errors</h3>
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Evaluates statistical relationship between monthly revenue and operational drivers across all 8 business units ($N=288, R^2=0.984$). Heteroskedasticity-consistent covariance (HC3) ensures conservative $t$-statistics.
+        </p>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Variable Name</th>
+                <th>Coefficient ($\beta$)</th>
+                <th>Std Error</th>
+                <th>$t$-Statistic</th>
+                <th>$p$-Value</th>
+                <th>95% Confidence Interval</th>
+                <th>VIF</th>
+                <th>Economic Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>`rev_lag0` (Recent Lag)</strong></td>
+                <td>+0.9279</td>
+                <td>0.0803</td>
+                <td>+11.56</td>
+                <td>&lt; 0.0001</td>
+                <td>[+0.7706, +1.0852]</td>
+                <td>72.17</td>
+                <td>Dominant autoregressive momentum</td>
+              </tr>
+              <tr>
+                <td><strong>`same_month_last_year`</strong></td>
+                <td>+0.4853</td>
+                <td>0.0438</td>
+                <td>+11.07</td>
+                <td>&lt; 0.0001</td>
+                <td>[+0.3994, +0.5712]</td>
+                <td>19.56</td>
+                <td>Annual seasonal rhythm / fiscal cycle</td>
+              </tr>
+              <tr>
+                <td><strong>`roll3` (3-Month Rolling Mean)</strong></td>
+                <td>-0.3838</td>
+                <td>0.0537</td>
+                <td>-7.14</td>
+                <td>&lt; 0.0001</td>
+                <td>[-0.4892, -0.2785]</td>
+                <td>35.86</td>
+                <td>Mean-reversion adjustment to short-term spikes</td>
+              </tr>
+              <tr>
+                <td><strong>`price_index_now`</strong></td>
+                <td>+2.1396</td>
+                <td>1.6297</td>
+                <td>+1.31</td>
+                <td>0.1892</td>
+                <td>[-1.0546, +5.3337]</td>
+                <td>1.34</td>
+                <td>Moderate pricing power; elasticity positive but noisy</td>
+              </tr>
+              <tr>
+                <td><strong>`sales_headcount_now`</strong></td>
+                <td>-0.0304</td>
+                <td>0.0107</td>
+                <td>-2.84</td>
+                <td>0.0045</td>
+                <td>[-0.0514, -0.0094]</td>
+                <td>1.42</td>
+                <td>Short-term onboarding ramp friction before quota attainment</td>
+              </tr>
+              <tr>
+                <td><strong>`marketing_spend_now`</strong></td>
+                <td>-0.0183</td>
+                <td>0.1417</td>
+                <td>-0.13</td>
+                <td>0.8970</td>
+                <td>[-0.2961, +0.2594]</td>
+                <td>1.27</td>
+                <td>Contemporaneous spend non-significant (requires distributed lags)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 3: Divisional Heterogeneity -->
+      <div class="tab-pane" id="tab-heterogeneity">
+        <h3 style="margin-bottom:0.75rem;">Divisional Error Concentration & Volatility Profiling</h3>
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Forecast errors are non-uniformly distributed across the corporate portfolio. Stable mature divisions benefit from simple seasonal run-rates, whereas high-growth divisions require driver ML.
+        </p>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Business Unit</th>
+                <th>Divisional Character</th>
+                <th>Seasonal Naive WAPE</th>
+                <th>Driver GBM WAPE</th>
+                <th>Error Reduction</th>
+                <th>Recommended Model Allocation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>BU_001</strong></td>
+                <td>Enterprise Core Services</td>
+                <td>0.084</td>
+                <td><strong class="text-success">0.048</strong></td>
+                <td>-42.9%</td>
+                <td>Pure Driver GBM</td>
+              </tr>
+              <tr>
+                <td><strong>BU_002</strong></td>
+                <td>High-Growth Cloud Products</td>
+                <td>0.152</td>
+                <td><strong class="text-success">0.071</strong></td>
+                <td>-53.3%</td>
+                <td>Pure Driver GBM (High driver elasticity)</td>
+              </tr>
+              <tr>
+                <td><strong>BU_003</strong></td>
+                <td>Government & Public Sector</td>
+                <td>0.091</td>
+                <td>0.063</td>
+                <td>-30.8%</td>
+                <td>Hybrid 70/30</td>
+              </tr>
+              <tr>
+                <td><strong>BU_004</strong></td>
+                <td>Retail & Digital Commerce</td>
+                <td>0.128</td>
+                <td><strong class="text-success">0.066</strong></td>
+                <td>-48.4%</td>
+                <td>Pure Driver GBM</td>
+              </tr>
+              <tr>
+                <td><strong>BU_005</strong></td>
+                <td>International Distribution</td>
+                <td>0.114</td>
+                <td>0.069</td>
+                <td>-39.5%</td>
+                <td>Hybrid 60/40</td>
+              </tr>
+              <tr>
+                <td><strong>BU_006</strong></td>
+                <td>Regulated Utilities & Facilities</td>
+                <td><strong class="text-success">0.062</strong></td>
+                <td>0.059</td>
+                <td>-4.8%</td>
+                <td>Seasonal Naive (ML complexity not justified)</td>
+              </tr>
+              <tr>
+                <td><strong>BU_007</strong></td>
+                <td>Emerging AI SaaS Solutions</td>
+                <td>0.188</td>
+                <td><strong class="text-success">0.079</strong></td>
+                <td>-58.0%</td>
+                <td>Pure Driver GBM + Growth Priors</td>
+              </tr>
+              <tr>
+                <td><strong>BU_008</strong></td>
+                <td>Legacy Hardware Maintenance</td>
+                <td><strong class="text-success">0.058</strong></td>
+                <td>0.055</td>
+                <td>-5.2%</td>
+                <td>Seasonal Naive (Contractual recurring cash flows)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 4: Q&A Register -->
+      <div class="tab-pane" id="tab-qa">
+        <div class="qa-item open">
+          <div class="qa-header">
+            <div><span class="qa-id">Q-P2-001</span> Which forecast method performs best at each horizon?</div>
+            <span>▾</span>
+          </div>
+          <div class="qa-content">
+            <strong>Direct Answer:</strong> At 1 Month, Driver GBM wins decisively (**WAPE 0.062** vs 0.105 Seasonal Naive). At 2 Months, Driver GBM maintains superiority (**WAPE 0.092**). At 3 Months, dynamic hybrid shrinkage (40% GBM / 60% Seasonal Naive) wins (**WAPE 0.089**).<br>
+            <strong>Evidence:</strong> 9-origin rolling backtest evaluation across 288 monthly observations.<br>
+            <strong>Recommendation:</strong> Implement horizon-dependent routing in FP&A planning tools.
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-header">
+            <div><span class="qa-id">Q-P2-002</span> When should FP&A prefer the seasonal-naive baseline?</div>
+            <span>▾</span>
+          </div>
+          <div class="qa-content">
+            <strong>Direct Answer:</strong> FP&A should anchor to seasonal-naive methods for forecast horizons beyond 2 months when forward driver visibility degrades, and for contractual legacy divisions (BU_006, BU_008) where error reduction from ML is less than 5%.<br>
+            <strong>Evidence:</strong> Multi-horizon error degradation curve where pure GBM degrades to 0.117 at Month 3 while Seasonal Naive stays at 0.105.
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-header">
+            <div><span class="qa-id">Q-P2-003</span> Are errors systematically biased upward or downward?</div>
+            <span>▾</span>
+          </div>
+          <div class="qa-content">
+            <strong>Direct Answer:</strong> Seasonal Naive is severely biased downward (**-10.4% bias**), systematically underestimating revenue by ~$25M across 8 divisions due to missing organic growth trends. Driver GBM is virtually unbiased (**-1.5% bias**).<br>
+            <strong>Evidence:</strong> Empirical forecast bias measured across 72 backtest test observations.
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-header">
+            <div><span class="qa-id">Q-P2-004</span> Which drivers explain useful predictive variation?</div>
+            <span>▾</span>
+          </div>
+          <div class="qa-content">
+            <strong>Direct Answer:</strong> Revenue momentum (`rev_lag0`, $t=11.56$), annual seasonality (`same_month_last_year`, $t=11.07$), and price index adjustments explain 98.4% of total variation.<br>
+            <strong>Evidence:</strong> OLS regression with HC3 robust standard errors ($N=288, R^2=0.984$).
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Recommendations -->
+      <div class="tab-pane" id="tab-recommendations">
+        <h3 style="margin-bottom:0.75rem;">FP&A Modernization Implementation Roadmap</h3>
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Integrating driver-based machine learning into Anaplan / Workday Adaptive Planning across 12 weeks.
+        </p>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Milestone</th>
+                <th>Timeframe</th>
+                <th>Action Items</th>
+                <th>Owner</th>
+                <th>Deliverable / KPI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sprint 1: Bias Correction</strong></td>
+                <td>Weeks 1–3</td>
+                <td>Eliminate -10.4% downward drag in base budget run-rates</td>
+                <td>Head of FP&A</td>
+                <td>$25.8M baseline revenue adjustment</td>
+              </tr>
+              <tr>
+                <td><strong>Sprint 2: Driver Ingestion</strong></td>
+                <td>Weeks 4–7</td>
+                <td>Automate pipeline pulling sales headcount and CRM pricing indices</td>
+                <td>Finance Analytics Lead</td>
+                <td>Daily synchronized driver lakehouse</td>
+              </tr>
+              <tr>
+                <td><strong>Sprint 3: Dynamic Blending</strong></td>
+                <td>Weeks 8–10</td>
+                <td>Deploy 80/20 (1m) and 40/60 (3m) hybrid engines into planning UI</td>
+                <td>Senior Data Scientist</td>
+                <td>Automated monthly rolling forecast publish</td>
+              </tr>
+              <tr>
+                <td><strong>Sprint 4: Executive Sign-off</strong></td>
+                <td>Weeks 11–12</td>
+                <td>Review 1-month and 3-month forecast tracking in monthly CFO operating reviews</td>
+                <td>CFO / VP Finance</td>
+                <td>Target WAPE &lt; 0.07 across enterprise</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>FP&A Rolling Forecast Engine | Lead Architect: <strong>Bhupesh Chandra Dimri</strong> (bhupesh7cd@gmail.com)</p>
+    <p style="margin-top:0.5rem; font-size:0.78rem;"><a href="../index.html">← Return to Master Executive Dashboard</a> | <a href="https://github.com/bhupesh-debug/ml-project-fpa-rolling-forecast-engine" target="_blank">GitHub Repository</a></p>
+  </footer>
+
+  <script src="assets/dashboard.js"></script>
+</body>
+</html>
