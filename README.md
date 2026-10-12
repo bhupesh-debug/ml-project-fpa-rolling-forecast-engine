@@ -1,5 +1,12 @@
 # FP&A Rolling Forecast Engine
 
+[![Live Interactive Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages-success)](https://bhupesh-debug.github.io/ml-project-fpa-rolling-forecast-engine/)
+[![Master Portfolio Hub](https://img.shields.io/badge/Master%20Hub-Portfolio-blue)](https://bhupesh-debug.github.io/ml-portfolio-finance-analytics-hub/)
+
+**🌐 Real-Time Interactive Analytics Lab:** [https://bhupesh-debug.github.io/ml-project-fpa-rolling-forecast-engine/](https://bhupesh-debug.github.io/ml-project-fpa-rolling-forecast-engine/)
+
+---
+
 *Driver-based machine learning forecast benchmarked against the baselines corporate finance teams already use.*
 
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/)
